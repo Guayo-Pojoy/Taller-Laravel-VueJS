@@ -1,0 +1,20 @@
+# Backend Laravel
+/backend/vendor
+/backend/node_modules
+/backend/.env
+/backend/storage/*.key
+/backend/public/storage
+
+# Frontend Vue
+/frontend/node_modules
+/frontend/dist
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
