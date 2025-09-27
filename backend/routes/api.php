@@ -2,8 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\UsuarioController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\UsuarioController;
 
 /*
 |--------------------------------------------------------------------------
@@ -11,16 +11,20 @@ use App\Http\Controllers\Api\AuthController;
 |--------------------------------------------------------------------------
 */
 
+// Rutas públicas de autenticación
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
+// Rutas protegidas con Sanctum
 Route::middleware('auth:sanctum')->group(function () {
-    // Información del usuario autenticado
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
 
-    // Rutas CRUD protegidas de usuarios
+    // Usuario autenticado
+    Route::get('/me', [AuthController::class, 'me']);
+
+    // Logout
+    Route::post('/logout', [AuthController::class, 'logout']);
+
+    // CRUD de usuarios
     Route::prefix('usuarios')->group(function () {
         Route::get('/listUsers', [UsuarioController::class, 'index']);
         Route::post('/addUser', [UsuarioController::class, 'store']);
@@ -28,7 +32,4 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/updateUser/{id}', [UsuarioController::class, 'update']);
         Route::delete('/deleteUser/{id}', [UsuarioController::class, 'destroy']);
     });
-
-    // Logout
-    Route::post('/logout', [AuthController::class, 'logout']);
 });

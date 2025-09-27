@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 use App\Models\Usuario;
 
 class AuthController extends Controller
@@ -21,7 +22,10 @@ class AuthController extends Controller
             'rol'      => 'required|in:admin,usuario',
         ]);
 
+        // Encriptar password
         $validated['password'] = Hash::make($validated['password']);
+
+        // Crear usuario
         $usuario = Usuario::create($validated);
 
         // Generar token
@@ -47,9 +51,9 @@ class AuthController extends Controller
         $usuario = Usuario::where('email', $request->email)->first();
 
         if (! $usuario || ! Hash::check($request->password, $usuario->password)) {
-            return response()->json([
-                'message' => 'Credenciales inválidas'
-            ], 401);
+            throw ValidationException::withMessages([
+                'email' => ['Credenciales inválidas.'],
+            ]);
         }
 
         // Generar token
@@ -67,18 +71,20 @@ class AuthController extends Controller
      */
     public function me(Request $request)
     {
-        return response()->json($request->user());
+        return response()->json([
+            'usuario' => $request->user()
+        ]);
     }
 
     /**
-     * Logout (revocar token actual)
+     * Logout (revocar todos los tokens del usuario)
      */
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        $request->user()->tokens()->delete();
 
         return response()->json([
-            'message' => 'Logout exitoso, token revocado'
+            'message' => 'Logout exitoso, todos los tokens fueron revocados'
         ]);
     }
 }
