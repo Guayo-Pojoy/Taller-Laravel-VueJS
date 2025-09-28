@@ -1,6 +1,6 @@
 import api from './api'
 
-export const authService = {
+const authService = {
   async login(email: string, password: string) {
     const response = await api.post('/login', { email, password })
     const { token, usuario } = response.data
@@ -24,3 +24,5 @@ export const authService = {
     return !!localStorage.getItem('token')
   }
 }
+
+export default authService

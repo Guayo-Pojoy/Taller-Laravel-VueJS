@@ -8,7 +8,9 @@
 
           <!-- Agregar usuario: habilitado solo si es admin -->
           <v-btn
-            block color="primary" class="mb-3"
+            block
+            color="primary"
+            class="mb-3"
             :disabled="!isAdmin"
             @click="goAddUser"
           >
@@ -25,6 +27,7 @@
             class="mb-4"
           />
 
+          <!-- Botón de logout -->
           <v-btn block color="error" variant="tonal" @click="logout">
             Cerrar sesión
           </v-btn>
@@ -53,6 +56,7 @@
 import { onMounted, ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import UsersList from '@/views/UsersList.vue'
+import authService from '@/services/auth'
 
 type User = { id:number; nombre:string; email:string; rol:'admin'|'usuario' }
 
@@ -62,7 +66,7 @@ const search = ref('')
 const user = ref<User | null>(null)
 onMounted(() => {
   const raw = localStorage.getItem('user')
-  user.value = raw ? JSON.parse(raw) as User : null
+  user.value = raw ? (JSON.parse(raw) as User) : null
 })
 
 const isAdmin = computed(() => user.value?.rol === 'admin')
@@ -70,8 +74,7 @@ const isAdmin = computed(() => user.value?.rol === 'admin')
 const goAddUser = () => router.push('/usuarios/nuevo')
 
 const logout = () => {
-  localStorage.removeItem('token')
-  localStorage.removeItem('user')
+  authService.logout()
   router.push('/login')
 }
 </script>
