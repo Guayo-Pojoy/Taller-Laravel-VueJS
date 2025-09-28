@@ -14,8 +14,8 @@ const handleLogin = async () => {
   try {
     await authService.login(email.value, password.value)
 
-    // Si hay redirect en la URL, úsalo
-    const redirect = route.query.redirect as string || '/usuarios'
+    // Si existe redirect en la URL (ej: /login?redirect=/usuarios) lo usamos
+    const redirect = (route.query.redirect as string) || '/usuarios'
     router.push(redirect)
   } catch (err: any) {
     error.value = err.response?.data?.message || 'Error al iniciar sesión'
@@ -24,28 +24,41 @@ const handleLogin = async () => {
 </script>
 
 <template>
-  <v-container>
-    <h2>Iniciar sesión</h2>
+  <v-container class="d-flex flex-column align-center justify-center" style="height: 100vh;">
+    <v-card class="pa-6" max-width="400">
+      <h2 class="text-h5 mb-4 text-center">Iniciar sesión</h2>
 
-    <v-text-field
-      v-model="email"
-      label="Correo"
-      type="email"
-      outlined
-      dense
-    />
-    <v-text-field
-      v-model="password"
-      label="Contraseña"
-      type="password"
-      outlined
-      dense
-    />
+      <v-text-field
+        v-model="email"
+        label="Correo electrónico"
+        type="email"
+        variant="outlined"
+        density="comfortable"
+        class="mb-3"
+      />
 
-    <v-btn color="primary" @click="handleLogin">
-      Entrar
-    </v-btn>
+      <v-text-field
+        v-model="password"
+        label="Contraseña"
+        type="password"
+        variant="outlined"
+        density="comfortable"
+        class="mb-4"
+      />
 
-    <div v-if="error" class="text-red mt-2">{{ error }}</div>
+      <v-btn color="primary" block @click="handleLogin">
+        Entrar
+      </v-btn>
+
+      <v-alert
+        v-if="error"
+        type="error"
+        variant="tonal"
+        class="mt-4"
+        border="start"
+      >
+        {{ error }}
+      </v-alert>
+    </v-card>
   </v-container>
 </template>
